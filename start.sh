@@ -1,0 +1,1 @@
+podman run --env-file=.env $1

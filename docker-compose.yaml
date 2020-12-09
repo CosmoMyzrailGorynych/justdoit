@@ -1,0 +1,18 @@
+version: '2'
+services:
+  justdoit:
+    image: c7a97a1e090bea4e537a702c4b673892577489e263cad64056ebb488c870ebb0
+    environment:
+      - GIT_URL
+      - GIT_DEPLOY_KEY
+      - GIT_DEPTH
+      - GIT_PULL_RATE
+      - GIT_BRANCH
+      - BUILD_SETUP
+      - BUILD_SCRIPT
+      - BUILD_TIMEOUT
+      - SERVE_DIR
+      - SERVE_DOTFILES
+      - SERVE_404
+    ports:
+      - '8080:8080'

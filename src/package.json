@@ -1,0 +1,15 @@
+{
+  "name": "justdoit",
+  "version": "1.0.0",
+  "description": "A simple JAM-stack-esque package that pulls a repo, runs a specified command in it, and starts a static server. Watches for new changes and rebuilds when needed.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "execa": "^4.1.0",
+    "serve-static": "^1.14.1"
+  }
+}
