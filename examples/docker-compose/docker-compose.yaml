@@ -1,0 +1,16 @@
+version: '3'
+services:
+  justdoit:
+    image: cosmomyzrailgorynych/justdoit
+    ports:
+      - '80:8080'
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    environment:
+      GIT_URL: 'TODO:'
+      GIT_BRANCH: master
+      BUILD_SETUP: 'npm install -g npx'
+      BUILD_SCRIPT: 'npm install\nnpx @11ty/eleventy'
+      SERVE_DIR: '_site'
