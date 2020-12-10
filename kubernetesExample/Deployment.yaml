@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: justdoit-example
+  namespace: justdoit-example
+spec:
+  replicas: 1
+  strategy: {}
+  selector:
+    matchLabels:
+      app: justdoit-example
+  template:
+    metadata:
+      labels:
+        app: justdoit-example
+    spec:
+      restartPolicy: Always
+      containers:
+        - image: cosmomyzrailgorynych/justdoit
+          imagePullPolicy: Always
+          name: justdoit-app
+          ports:
+            - containerPort: 8080
+          resources: {}
+          env:
+            - name: GIT_URL
+              value: 'TODO:'
+            # Uncomment to add a deploy key from a Kubernetes secret
+            # - name: GIT_DEPLOY_KEY
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: env
+            #       key: GIT_DEPLOY_KEY
+            - name: BUILD_SETUP
+              value: |-
+                npm install -g npx
+            - name: BUILD_SCRIPT
+              value: |-
+                npm install
+                npx @11ty/eleventy
+            - name: SERVE_DIR
+              value: ./_site
