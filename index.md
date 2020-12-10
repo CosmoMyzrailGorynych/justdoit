@@ -1,37 +1,59 @@
-## Welcome to GitHub Pages
+JUSTDOIT is a container for making home-brewn JAM-stack apps without bullshit. Kubernetes-friendly.
 
-You can use the [editor on GitHub](https://github.com/CosmoMyzrailGorynych/justdoit/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+## About
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+This image does the following:
 
-### Markdown
+1. (Conditionally) adds a deploy key for your repo;
+2. Clones the repo;
+3. Runs a setup command specified by you (default is `npm install`);
+3. Runs a build command specified by you (or defaults to `npm run build`);
+4. Serves a static HTTP server on port `8080`;
+5. Fetches the repo at a given interval and rebuilds your site if the repo changed.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+> Only a single branch is cloned, with the default number of commits of 10 (it fetches only a part of the history).
 
-```markdown
-Syntax highlighted code block
+This image is based on [node.js LTS image](https://hub.docker.com/_/node). It contains npm and yarn. Made with [Podman](https://podman.io/).
 
-# Header 1
-## Header 2
-### Header 3
+# [Examples](https://github.com/CosmoMyzrailGorynych/justdoit/tree/master/examples) ⬅ 💃💅🎉💪💦
 
-- Bulleted
-- List
+## Getting the image
 
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+```sh
+docker pull cosmomyzrailgorynych/justdoit
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+Also see the repo at the [Docker hub](https://hub.docker.com/r/cosmomyzrailgorynych/justdoit).
 
-### Jekyll Themes
+## Environment variables
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/CosmoMyzrailGorynych/justdoit/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+* `GIT_URL` **(required)** — the URL to clone. For public repos, it can be anything supported by `git clone`. If you are using a private repo, a `git@…` URL with a deploy key is required.
+* `GIT_DEPLOY_KEY` — a private key that has read access to the repo at `GIT_URL`. It must be a string that has:
+    1. its lines joined and split with literal `\n`;
+    2. an additional `\n` at the end of it.
+* `GIT_DEPLOY_PASSPHRASE` — suits both as a potential passphrase and a password for git requests. Usually not needed at all; defaults to an empty string.
+* `GIT_DEPLOY_FORMAT` — `rsa`, `ed25519` and such. Defaults to `rsa`. Sets the filename of a private key in the `~/.ssh` directory.
+* `GIT_DEPTH` — the number of commits to fetch from the repo. Other commits will not be downloaded. Defaults to `10`.
+* `GIT_PULL_RATE` — the duration of a pause between builds, in minutes. Defaults to `5` (five minutes). Fractional periods (like `1.5`) can be used.
+* `GIT_BRANCH` — the branch to checkout. Other branches will not be downloaded. Defaults to `master`.
 
-### Support or Contact
+---
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+* `BUILD_SETUP` — a shell script that will be executed once after a repo is cloned. Multiline strings (split with literal `\n`) will be split into separate sequential commands. Escaped lines (`\\n`) will be joined into one line.
+* `BUILD_SCRIPT` — a shell script that will be executed after a repo is cloned or successfully cloned. Behaves in the same way as `BUILD_SETUP`.
+* `BUILD_TIMEOUT` — Maximum time to wait for a build to finish, in minutes.
+* `BUILD_AUTOWIPE` — Whether or not the folder at `SERVE_DIR` should be removed before building the repo. Defaults to `1` (wipe); set to `0` to disable it.
+
+---
+
+* `SERVE_DIR` — a directory inside your repo to serve. Defaults to `./dist`.
+* `SERVE_DOTFILES` — `0` or `1` (default). Whether files with dots at the beginning of their name (like `.gitignore`) will be served.
+* `SERVE_404` — a path to a file that will be served if a client opens an invalid URL. Defaults to `404.html`. If the file is not found, a plain-text response will be given.
+
+## Support
+
+Eh.
+
+## Bugs & PRs
+
+Send them to [this repo](). Making stuff for podman/docker/crio/whatever is the last thing I would usually do, so don't await for active maintenance. You get stuff for free without any warrancies.
