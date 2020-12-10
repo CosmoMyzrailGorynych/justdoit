@@ -53,7 +53,7 @@ const defaults = {
     GIT_URL: null,
     GIT_DEPLOY_KEY: void 0,
     GIT_DEPLOY_FORMAT: 'rsa',
-    GIT_DEPTH: 1,
+    GIT_DEPTH: 10,
     // in minutes
     GIT_PULL_RATE: 1,
     GIT_BRANCH: 'master',
