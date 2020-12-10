@@ -127,6 +127,9 @@ const execScript = async (script, opts) => {
     const lines = script.split(commandSafeSplit);
     for (let line of lines) {
         line = line.replace(clearLine, ' ').trim();
+        if (line === '') {
+            continue;
+        }
         console.log('> ' + line);
         const {all, stdout} = await execa.command(line, opts);
         console.log(all || stdout || '');
