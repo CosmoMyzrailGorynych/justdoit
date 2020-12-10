@@ -1,3 +1,5 @@
+![](https://raw.githubusercontent.com/CosmoMyzrailGorynych/justdoit/gh-pages/justdoit.webp)
+
 JUSTDOIT is a container for making home-brewn JAM-stack apps without bullshit. Kubernetes-friendly.
 
 ## About
