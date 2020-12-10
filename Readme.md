@@ -17,6 +17,14 @@ This image is based on [node.js LTS image](https://hub.docker.com/_/node). It co
 
 # [Examples](https://github.com/CosmoMyzrailGorynych/justdoit/tree/master/examples) ⬅ 💃💅🎉💪💦
 
+## Getting the image
+
+```sh
+docker pull cosmomyzrailgorynych/justdoit
+```
+
+Also see the repo at the [Docker hub](https://hub.docker.com/r/cosmomyzrailgorynych/justdoit).
+
 ## Environment variables
 
 * `GIT_URL` **(required)** — the URL to clone. For public repos, it can be anything supported by `git clone`. If you are using a private repo, a `git@…` URL with a deploy key is required.
