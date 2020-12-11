@@ -62,6 +62,7 @@ const defaults = {
     BUILD_SCRIPT: 'npm run build',
     // in minutes
     BUILD_TIMEOUT: 30,
+    BUILD_HOOK: '',
     BUILD_AUTOWIPE: 1,
 
     SERVE_DIR: 'dist',
@@ -140,7 +141,7 @@ const execScript = async (script, opts) => {
 /**
  * @returns {boolean} Whether or not the repo state changed.
  */
-const pull = async () => {
+const pull = async force=> {
     let command = `${sshAddPrefix} git pull`;
     console.log('Pulling the repo…');
     const {stdout} = await execa.command(command, {
@@ -229,8 +230,13 @@ const build =  async () => {
         page404 = '404 not found';
     });
 };
+let rebuildTimeout;
 const scheduleRebuild = () => {
-    setTimeout(async () => {
+    if (rebuildTimeout) {
+        clearTimeout(rebuildTimeout);
+        rebuildTimeout = void 0;
+    }
+    rebuildTimeout = setTimeout(async () => {
         if (await sync()) {
             build();
         } else {
@@ -238,6 +244,25 @@ const scheduleRebuild = () => {
         }
     }, opts.GIT_PULL_RATE * 1000 * 60);
 };
+
+const webhook = async (req, res) => {
+    sync(true);
+    res.writeHead(200, 'OK', {
+        'Content-Type' : 'application/json'
+    });
+    res.write('{"status": "ok","action": "rebuilding"}');
+    res.end();
+    clearTimeout(rebuildTimeout);
+    try {
+        await sync();
+        await build();
+    } catch(e) {
+        console.error('Could not build from a webhook:', e);
+    } finally {
+        scheduleRebuild();
+    }
+};
+
 const serve = () => {
     const handler = serveStatic(path.join('./project', opts.SERVE_DIR), {
         dotfiles: opts.SERVE_DOTFILES === 1 ? 'allow' : 'ignore',
@@ -246,6 +271,13 @@ const serve = () => {
     });
     console.log('Starting the static file server…');
     const server = http.createServer(function onRequest (req, res) {
+        if (opts.BUILD_HOOK) {
+            const url = new URL(req.url, `http://${req.headers.host}`);
+            if (url.pathname === opts.BUILD_HOOK) {
+                webhook(req, res);
+                return true;
+            }
+        }
         handler(req, res, hmm => {
             send404(res);
         });
