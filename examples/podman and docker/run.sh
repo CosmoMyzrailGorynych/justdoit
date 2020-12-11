@@ -1,2 +1,2 @@
-podman pull cosmomyzrailgorynych/justdoit
-podman run --env-file=11ty.example.env cosmomyzrailgorynych/justdoit
+podman pull cosmomyzrailgorynych/justdoit:latest-alpine
+podman run --env-file=11ty.example.env cosmomyzrailgorynych/justdoit:latest-alpine

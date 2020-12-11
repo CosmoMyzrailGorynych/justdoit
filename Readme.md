@@ -19,6 +19,14 @@ This image is based on [node.js LTS image](https://hub.docker.com/_/node). It co
 
 ## Getting the image
 
+Alpine (recommended):
+
+```sh
+docker pull cosmomyzrailgorynych/justdoit:latest-alpine
+```
+
+Or vanilla:
+
 ```sh
 docker pull cosmomyzrailgorynych/justdoit
 ```
@@ -56,4 +64,4 @@ Eh.
 
 ## Bugs & PRs
 
-Send them to [this repo](). Making stuff for podman/docker/crio/whatever is the last thing I would usually do, so don't await for active maintenance. You get stuff for free without any warrancies.
+Send them to [this repo](https://github.com/CosmoMyzrailGorynych/justdoit). Making stuff for podman/docker/crio/whatever is the last thing I would usually do, so don't await for active maintenance. You get stuff for free without any warrancies.

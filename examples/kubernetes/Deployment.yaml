@@ -16,7 +16,7 @@ spec:
     spec:
       restartPolicy: Always
       containers:
-        - image: cosmomyzrailgorynych/justdoit
+        - image: cosmomyzrailgorynych/justdoit:latest-alpine
           imagePullPolicy: Always
           name: justdoit-app
           ports:

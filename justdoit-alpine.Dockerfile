@@ -1,8 +1,15 @@
-FROM node:lts
+#
+# Alpine image
+#
+
+FROM node:lts-alpine
 
 LABEL Description="This image takes an URL to a repo, a build command, and serves a static site for you. No bullshit included."
 LABEL Vendor="Comigo"
-LABEL Version="0.0.0"
+
+USER root
+# Install ssh-keyscan and git
+RUN apk add --no-cache openssh-client git
 
 # Do not use the root user
 USER node
@@ -21,6 +28,8 @@ ADD --chown=node:node src /home/node/justdoit/
 
 WORKDIR /home/node/justdoit/
 RUN npm install
+RUN npm cache clean --force
+RUN npm prune --production
 
 CMD eval "$(ssh-agent -s)" && node --trace-warnings index.js
 EXPOSE 8080
