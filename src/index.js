@@ -147,7 +147,7 @@ const pull = async () => {
         cwd: projCwd,
         shell: true
     });
-    if (stdout === '' || stdout === 'Already up-to-date.') {
+    if (stdout === '' || stdout === 'Already up-to-date.' || stdout === 'Already up to date.') {
         console.log('Looks like there are no changes in the repo.');
         return false;
     }
