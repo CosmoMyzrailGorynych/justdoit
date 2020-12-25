@@ -173,14 +173,19 @@ const clone = async () => {
  * @returns {boolean} Whether or not the repo state changed.
  */
 const sync = async () => {
+    let exists = false;
     try {
         // Check if a project already exists
         await fs.access('./project', fs.R_OK | fs.W_OK);
-        return pull();
+        exists = true;
     } catch (e) {
-        await clone();
-        return true;
+        exists = false;
     }
+    if (exists) {
+        return await pull();
+    }
+    await clone();
+    return true;
 };
 
 const setup = () => {
