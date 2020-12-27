@@ -1,8 +1,7 @@
 console.log('Inserting cartridge…');
 
 const path = require('path'),
-      fsc = require('fs'),
-      fs = fsc.promises,
+      fs = require('fs-extra'),
       http = require('http');
 
 const serveStatic = require('serve-static'),
@@ -12,6 +11,7 @@ const hostnamePattern = /(^git@(?<hostnameGit>\S+):\S+$|^https?:\/\/(?<hostnameH
 
 const projCwd = path.join(process.cwd(), './project');
 let page404 = '404 not found';
+let building;
 
 console.log(`
                           .*%/.
@@ -64,6 +64,7 @@ const defaults = {
     BUILD_TIMEOUT: 30,
     BUILD_HOOK: '',
     BUILD_AUTOWIPE: 1,
+    BUILD_USE_SUBSTITUTE: 1,
 
     SERVE_DIR: 'dist',
     // 0 or 1
@@ -197,6 +198,7 @@ const setup = () => {
     });
 };
 const build =  async () => {
+    building = true;
     const pubDir = path.join('./project', opts.SERVE_DIR);
 
     if (opts.BUILD_AUTOWIPE === 1) {
@@ -222,6 +224,18 @@ const build =  async () => {
         console.error(e.message);
         console.error(e.all);
         manageStatusPage(false);
+    } finally {
+        building = false;
+    }
+
+    if (opts.BUILD_USE_SUBSTITUTE === 1) {
+        console.log('Removing the old build copy…')
+        await fs.rmdir('./substitute', {
+            recursive: true
+        });
+        console.log('Duplicating the new build as a substitute for the next builds…');
+        await fs.copy(pubDir, './substitute');
+        console.log('Done.');
     }
 
     // wait *between* builds to prevent overlapping of processes
@@ -274,6 +288,14 @@ const serve = () => {
         fallthrough: false,
         redirect: true,
     });
+    let substituteHandler;
+    if (opts.BUILD_USE_SUBSTITUTE) {
+        substituteHandler = serveStatic('./substitute', {
+            dotfiles: opts.SERVE_DOTFILES === 1 ? 'allow' : 'ignore',
+            fallthrough: false,
+            redirect: true,
+        });
+    }
     console.log('Starting the static file server…');
     const server = http.createServer(function onRequest (req, res) {
         if (opts.BUILD_HOOK) {
@@ -283,7 +305,10 @@ const serve = () => {
                 return true;
             }
         }
-        handler(req, res, hmm => {
+        (opts.BUILD_USE_SUBSTITUTE === 1 && building ?
+            substituteHandler :
+            handler
+        )(req, res, hmm => {
             send404(res);
         });
     });

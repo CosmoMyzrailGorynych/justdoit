@@ -52,6 +52,7 @@ Also see the repo at the [Docker hub](https://hub.docker.com/r/cosmomyzrailgoryn
 * `BUILD_TIMEOUT` — Maximum time to wait for a build to finish, in minutes.
 * `BUILD_AUTOWIPE` — Whether or not the folder at `SERVE_DIR` should be removed before building the repo. Defaults to `1` (wipe); set to `0` to disable it.
 * `BUILD_HOOK` — a webhook. A secret URL on which any request triggers pulling a repo and rebuilding the site. The site will be rebuilt even if the repo is not changed. Can be any path with a starting slash without GET parameters.
+* `BUILD_USE_SUBSTITUTE` — whether to serve a copy of a built directory while building a new one. Strongly recommended for enabled `BUILD_AUTOWIPE` as it prevents 404 errors popping while files are being baked. Defaults to `1` (use a substitute).
 
 ---
 
