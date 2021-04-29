@@ -60,6 +60,9 @@ Also see the repo at the [Docker hub](https://hub.docker.com/r/cosmomyzrailgoryn
 * `SERVE_DOTFILES` — `0` or `1` (default). Whether files with dots at the beginning of their name (like `.gitignore`) will be served.
 * `SERVE_404` — a path to a file that will be served if a client opens an invalid URL. Defaults to `404.html`. If the file is not found, a plain-text response will be given.
 
+## Checking the app's status
+
+If syncing and building succeeded, the app will serve an endpoint `/justdoitstatus.json`. It will have `{"ok":true}` response. If the build/pulling was unsuccessful, there will be a 404 error.
 ## Support
 
 Eh.
