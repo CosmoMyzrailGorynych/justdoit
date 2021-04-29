@@ -256,7 +256,14 @@ const scheduleRebuild = () => {
         rebuildTimeout = void 0;
     }
     rebuildTimeout = setTimeout(async () => {
-        if (await sync()) {
+        let changed;
+        try {
+            changed = await sync();
+        } catch (e) {
+            console.log('Could not pull the repo:', e)
+            manageStatusPage(false);
+        }
+        if (changed) {
             build();
         } else {
             scheduleRebuild();
@@ -265,20 +272,28 @@ const scheduleRebuild = () => {
 };
 
 const webhook = async (req, res) => {
-    sync(true);
-    res.writeHead(200, 'OK', {
-        'Content-Type' : 'application/json'
-    });
-    res.write('{"status": "ok","action": "rebuilding"}');
-    res.end();
-    clearTimeout(rebuildTimeout);
     try {
         await sync();
-        await build();
-    } catch(e) {
-        console.error('Could not build from a webhook:', e);
-    } finally {
-        scheduleRebuild();
+        res.writeHead(200, 'OK', {
+            'Content-Type' : 'application/json'
+        });
+        res.write('{"status": "ok","action": "rebuilding"}');
+        res.end();
+        clearTimeout(rebuildTimeout);
+        try {
+            await build();
+        } catch(e) {
+            console.error('(Webhook) Could not build the repo.', e);
+        } finally {
+            scheduleRebuild();
+        }
+    } catch (e) {
+        res.writeHead(503, 'Build error', {
+            'Content-Type' : 'application/json'
+        });
+        console.error('(Webhook) Could not sync the repository.', e);
+        res.write('{"status": "failed","msg": "See the logs at the container."}');
+        res.end();
     }
 };
 
